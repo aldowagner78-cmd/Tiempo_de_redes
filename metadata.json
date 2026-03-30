@@ -1,0 +1,5 @@
+{
+  "name": "NEXUS CONTROL",
+  "description": "Centro de comando de alta tecnología para la gestión de misiones, biometría y entrenamiento cognitivo.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"]
+}
