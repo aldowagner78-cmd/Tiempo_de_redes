@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies>
+        <!-- Forzar bloqueo de pantalla -->
+        <force-lock />
+        
+        <!-- Políticas de contraseña -->
+        <limit-password />
+        
+        <!-- Limpiar datos (factory reset - solo emergencia) -->
+        <wipe-data />
+        
+        <!-- Deshabilitar cámara (opcional para control parental) -->
+        <disable-camera />
+        
+        <!-- Monitorear intentos de desbloqueo -->
+        <watch-login />
+    </uses-policies>
+</device-admin>

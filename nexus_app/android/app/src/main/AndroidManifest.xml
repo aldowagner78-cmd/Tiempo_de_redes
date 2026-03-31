@@ -1,0 +1,177 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.saludable.nexus_control">
+
+    <!-- ============================================== -->
+    <!-- PERMISOS DE MONITOREO Y CONTROL PARENTAL -->
+    <!-- ============================================== -->
+    
+    <!-- Monitoreo de uso de apps en tiempo real via UsageStatsManager -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    
+    <!-- Overlay de bloqueo ("El Muro") sobre otras apps -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    
+    <!-- Servicio persistente para monitoreo continuo -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    
+    <!-- Auto-inicio al reiniciar dispositivo -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- Consultar apps instaladas para lista negra -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    
+    <!-- Mantener CPU activa para servicio de monitoreo -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
+    <!-- ============================================== -->
+    <!-- PERMISOS DE SENSORES Y HARDWARE -->
+    <!-- ============================================== -->
+    
+    <!-- Cámara para análisis de comida (Bio-Fuel) y OCR (Comms) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    
+    <!-- Micrófono para posibles comandos de voz o validación -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    
+    <!-- GPS/Ubicación para validación de ejercicio outdoor (Arena) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    
+    <!-- Sensores de movimiento (giroscopio, acelerómetro) para ejercicio -->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
+    
+    <!-- Vibración para feedback -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- ============================================== -->
+    <!-- PERMISOS DE HEALTH CONNECT -->
+    <!-- ============================================== -->
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.health.WRITE_STEPS" />
+    <uses-permission android:name="android.permission.health.READ_EXERCISE" />
+    <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
+    <uses-permission android:name="android.permission.health.READ_DISTANCE" />
+    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
+    
+    <!-- ============================================== -->
+    <!-- PERMISOS DE RED (para sincronización opcional) -->
+    <!-- ============================================== -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- ============================================== -->
+    <!-- PERMISOS DE ALMACENAMIENTO -->
+    <!-- ============================================== -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:label="Nexus Control"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="34">
+        
+        <!-- MainActivity Principal -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        
+        <!-- Servicio de Monitoreo de Apps (Foreground Service) -->
+        <service
+            android:name=".services.AppMonitorService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="parental_control_monitoring" />
+        </service>
+        
+        <!-- Servicio de Overlay (Muro de Bloqueo) -->
+        <service
+            android:name=".services.OverlayService"
+            android:enabled="true"
+            android:exported="false" />
+        
+        <!-- Receiver para inicio al boot -->
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Device Admin Receiver para modo Device Owner -->
+        <receiver
+            android:name=".receivers.DeviceAdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Intent filter para Health Connect -->
+        <intent-filter>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent-filter>
+        
+        <!-- Required for API 34+ -->
+        <activity
+            android:name="androidx.health.connect.client.permission.HealthDataRequestPermissionsActivity"
+            android:exported="true" />
+        
+        <!-- Flutter embedding -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+            
+    </application>
+    
+    <!-- Query para Health Connect -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+        <!-- Permite consultar todas las apps para blacklist -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
+    
+</manifest>

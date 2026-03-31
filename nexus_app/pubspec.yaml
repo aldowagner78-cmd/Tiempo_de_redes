@@ -1,0 +1,73 @@
+name: nexus_control
+description: "Aplicación de control parental gamificada - Nexus Control"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  
+  # Local Database (Offline-first)
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.2
+  
+  # Camera & Sensors
+  camera: ^0.11.0+1
+  sensors_plus: ^4.0.2
+  geolocator: ^11.0.0
+  permission_handler: ^11.3.0
+  
+  # ML & AI (Free/Local options)
+  google_mlkit_text_recognition: ^0.12.0
+  google_mlkit_image_labeling: ^0.12.0
+  
+  # Health Connect (Free)
+  health: ^10.2.0
+  
+  # Audio for system sounds
+  audioplayers: ^6.0.0
+  
+  # Overlay for block wall
+  flutter_overlay_window: ^0.4.4
+  
+  # Background Service (El Muro - monitoreo de apps)
+  flutter_background_service: ^5.0.5
+  
+  # Local Notifications (notificaciones del servicio)
+  flutter_local_notifications: ^17.0.0
+  
+  # UI Enhancements
+  flutter_animate: ^4.5.0
+  google_fonts: ^6.2.1
+  shimmer: ^3.0.0
+  fl_chart: ^0.67.0
+  
+  # Utils
+  uuid: ^4.3.3
+  intl: ^0.19.0
+  shared_preferences: ^2.2.2
+  http: ^1.2.0
+  crypto: ^3.0.3
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.10+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.8
+  isar_generator: ^3.1.0+1
+  riverpod_generator: ^2.4.0
+
+flutter:
+  uses-material-design: true
