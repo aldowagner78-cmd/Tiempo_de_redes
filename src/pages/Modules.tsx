@@ -15,8 +15,9 @@ import { cn } from '@/src/lib/utils';
 const modules = [
   { 
     id: 'arena', 
-    title: 'ARENA', 
-    description: 'Kinetic endurance training. Synchronize physical movements with the Nexus Core.', 
+    title: 'ENTRENAMIENTO', 
+    subtitle: 'Ejercicio Físico',
+    description: 'Sincroniza movimientos físicos con el Núcleo Nexus. Entrena resistencia y fuerza.', 
     icon: Dumbbell, 
     reward: 250, 
     progress: 66,
@@ -25,8 +26,9 @@ const modules = [
   },
   { 
     id: 'bio-fuel', 
-    title: 'BIO-FUEL', 
-    description: 'Log nutritional intake. Ensure biological hardware is optimized for deep space travel.', 
+    title: 'ALIMENTACIÓN', 
+    subtitle: 'Nutrición',
+    description: 'Registra tu alimentación. Asegura que tu hardware biológico esté optimizado.', 
     icon: Utensils, 
     reward: 150, 
     progress: 25,
@@ -35,8 +37,9 @@ const modules = [
   },
   { 
     id: 'comms', 
-    title: 'COMMS', 
-    description: 'Decipher ancient logs and interstellar scripts. Literacy level optimization protocol.', 
+    title: 'BIBLIOTECA', 
+    subtitle: 'Lectura',
+    description: 'Descifra registros antiguos y textos interestelares. Protocolo de lectura activa.', 
     icon: BookOpen, 
     reward: 300, 
     progress: 80,
@@ -45,8 +48,9 @@ const modules = [
   },
   { 
     id: 'math', 
-    title: 'MATH', 
-    description: 'Calculate orbital trajectories and quantum physics equations. Accuracy is critical.', 
+    title: 'CÁLCULO', 
+    subtitle: 'Cálculo Mental',
+    description: 'Calcula trayectorias orbitales y ecuaciones. La precisión es crítica.', 
     icon: Calculator, 
     reward: 400, 
     progress: 50,
@@ -55,8 +59,9 @@ const modules = [
   },
   { 
     id: 'logic', 
-    title: 'LOGIC', 
-    description: 'Resolve structural paradoxes in the system. Neural pathway reconstruction.', 
+    title: 'INGENIO', 
+    subtitle: 'Puzzles e Ingenio',
+    description: 'Resuelve paradojas estructurales del sistema. Reconstrucción de rutas neuronales.', 
     icon: Puzzle, 
     reward: 200, 
     progress: 75,
@@ -65,8 +70,9 @@ const modules = [
   },
   { 
     id: 'coding', 
-    title: 'CODING', 
-    description: 'Override Nexus protocols. Rewrite core functions using advanced logic strings.', 
+    title: 'PROGRAMACIÓN', 
+    subtitle: 'Programación Básica',
+    description: 'Reescribe funciones del núcleo usando secuencias lógicas avanzadas.', 
     icon: Code, 
     reward: 500, 
     progress: 15,
@@ -85,8 +91,8 @@ export const Modules: React.FC<ModulesProps> = ({ onSelectModule }) => {
       <div className="mb-8 flex justify-between items-end">
         <div className="relative px-4 py-2">
           <div className="absolute top-[-2px] left-[-2px] w-3 h-3 border-t-2 border-l-2 border-[#00F5FF]"></div>
-          <h1 className="font-headline text-2xl font-black tracking-widest text-white uppercase">COMMAND_CENTER</h1>
-          <p className="font-technical text-sm text-[#849495] uppercase tracking-widest">Select training module for extraction</p>
+          <h1 className="font-headline text-2xl font-black tracking-widest text-white uppercase">CENTRO DE MANDO</h1>
+          <p className="font-technical text-sm text-[#849495] uppercase tracking-widest">Selecciona un módulo de entrenamiento</p>
         </div>
         <button className="bg-[#00F5FF] text-[#003739] px-6 py-2 font-headline text-xs font-bold tracking-widest hover:brightness-110 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(0,245,255,0.3)]">
           <Coins className="w-4 h-4" />
@@ -118,6 +124,7 @@ export const Modules: React.FC<ModulesProps> = ({ onSelectModule }) => {
                     <span className="font-technical text-xs font-bold text-[#00fe87]">+{module.reward}</span>
                   </div>
                 </div>
+                {'subtitle' in module && <p className="font-technical text-xs text-[#849495] uppercase tracking-widest mb-1">{module.subtitle}</p>}
                 <p className="font-technical text-[#b9caca] text-sm leading-tight uppercase tracking-tight">{module.description}</p>
                 <div className="mt-4 h-1 w-full bg-[#181b25] overflow-hidden">
                   <motion.div 

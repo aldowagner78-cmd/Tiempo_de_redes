@@ -9,8 +9,19 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/src/lib/firebase';
 import { NexusChild, NexusDevice, NexusTransaction } from '@/src/types';
-import { Shield, Wifi, WifiOff, ChevronDown, ChevronUp } from 'lucide-react';
+import { Shield, Wifi, WifiOff, ChevronDown, ChevronUp, Bell } from 'lucide-react';
 import { ParentControlPanel } from './ParentControlPanel';
+
+// ── Tipos de alerta ─────────────────────────────────────────────
+interface NexusAlert {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  childName?: string;
+  timestamp: string;
+  read: boolean;
+}
 
 // ── Constantes ──────────────────────────────────────────────────
 const STORAGE_KEY = 'nexus_device_uid';
@@ -26,6 +37,19 @@ const SOURCE_COLORS: Record<string, string> = {
   override: '#FFB6C1',
   parent: '#00F5FF',
   system: '#849495',
+};
+
+const SOURCE_NAMES: Record<string, string> = {
+  arena: 'Entrenamiento',
+  biofuel: 'Alimentación',
+  math: 'Cálculo',
+  logic: 'Ingenio',
+  coding: 'Programación',
+  comms: 'Biblioteca',
+  neuro: 'Mente',
+  override: 'Desafíos',
+  parent: 'Padre',
+  system: 'Sistema',
 };
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -97,6 +121,7 @@ export const NexusParentPanel: React.FC = () => {
   const [device, setDevice] = useState<NexusDevice | null>(null);
   const [children, setChildren] = useState<NexusChild[]>([]);
   const [transactions, setTransactions] = useState<NexusTransaction[]>([]);
+  const [alerts, setAlerts] = useState<NexusAlert[]>([]);
   const [isOnline, setIsOnline] = useState(false);
   const [error, setError] = useState('');
   const [showControls, setShowControls] = useState(false);
@@ -170,6 +195,17 @@ export const NexusParentPanel: React.FC = () => {
       setTransactions(snap.docs.map((d) => ({ id: d.id, ...d.data() } as unknown as NexusTransaction)));
     });
     unsubRefs.current.push(unsub3);
+
+    // 4. Alertas/notificaciones (subcollección, últimas 20)
+    const alertQuery = query(
+      collection(db, 'nexus_devices', deviceUid, 'alerts'),
+      orderBy('timestamp', 'desc'),
+      limit(20),
+    );
+    const unsub4 = onSnapshot(alertQuery, (snap) => {
+      setAlerts(snap.docs.map((d) => ({ id: d.id, ...d.data() } as unknown as NexusAlert)));
+    });
+    unsubRefs.current.push(unsub4);
 
     return unsubAll;
   }, [deviceUid]);
@@ -306,6 +342,54 @@ export const NexusParentPanel: React.FC = () => {
         </div>
       )}
 
+      {/* Alertas / Notificaciones */}
+      {alerts.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Bell className="w-3.5 h-3.5 text-[#FE00FE]" />
+            <h3 className="font-label text-[#FE00FE] uppercase tracking-widest text-[10px]">
+              Notificaciones ({alerts.filter(a => !a.read).length} nuevas)
+            </h3>
+          </div>
+          <div className="space-y-1 max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-[#FE00FE]/20">
+            {alerts.map((alert) => (
+              <div
+                key={alert.id}
+                className={`flex items-start gap-3 rounded-lg px-3 py-2 border ${
+                  !alert.read
+                    ? 'bg-[#FE00FE]/5 border-[#FE00FE]/20'
+                    : 'bg-[#1c1f29]/40 border-[#00F5FF]/10'
+                }`}
+              >
+                <div className="text-lg shrink-0 mt-0.5">
+                  {alert.type === 'achievement' && '🏆'}
+                  {alert.type === 'timeExpired' && '⏰'}
+                  {alert.type === 'cheatAttempt' && '⚠️'}
+                  {alert.type === 'foodLogged' && '🍎'}
+                  {alert.type === 'exerciseMilestone' && '🏃'}
+                  {alert.type === 'missionComplete' && '✅'}
+                  {alert.type === 'levelUp' && '⬆️'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm text-[#dfe2ef] font-medium">
+                    {alert.title}
+                  </div>
+                  <div className="text-[11px] text-[#849495]">
+                    {alert.message}
+                  </div>
+                  <div className="text-[9px] text-[#849495]/60 mt-1">
+                    {alert.timestamp ? formatDate(alert.timestamp) : ''}
+                  </div>
+                </div>
+                {!alert.read && (
+                  <div className="w-2 h-2 rounded-full bg-[#FE00FE] shrink-0 mt-2" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Historial de transacciones */}
       {transactions.length > 0 && (
         <div className="space-y-2">
@@ -326,7 +410,7 @@ export const NexusParentPanel: React.FC = () => {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-[#dfe2ef] truncate">
-                    {tx.description || tx.source}
+                    {tx.description || SOURCE_NAMES[tx.source] || tx.source}
                   </div>
                   <div className="text-[10px] text-[#849495]">
                     {tx.childName} · {formatDate(tx.createdAt)}

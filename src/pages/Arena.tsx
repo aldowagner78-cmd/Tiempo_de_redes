@@ -33,7 +33,7 @@ export const Arena: React.FC<ArenaProps> = ({ onBack, onSuccess }) => {
       await addDoc(collection(db, 'logs'), {
         uid: auth.currentUser.uid,
         timestamp: new Date().toISOString(),
-        message: `Módulo Arena completado: ${steps} pasos`,
+        message: `Módulo Entrenamiento completado: ${steps} pasos`,
         type: 'success',
         reward
       });
@@ -93,10 +93,11 @@ export const Arena: React.FC<ArenaProps> = ({ onBack, onSuccess }) => {
       {/* Center Panel: The Kinetic Core */}
       <section className="lg:col-span-6 flex flex-col items-center justify-center space-y-8 order-1 lg:order-2">
         <div className="text-center space-y-2">
-          <h1 className="font-headline text-2xl md:text-4xl font-black tracking-tighter text-white uppercase">MÓDULO: ARENA</h1>
+          <h1 className="font-headline text-2xl md:text-4xl font-black tracking-tighter text-white uppercase">ENTRENAMIENTO</h1>
+          <p className="font-technical text-xs text-[#849495] uppercase tracking-widest">Ejercicio Físico</p>
           <div className="inline-flex items-center gap-2 px-4 py-1 bg-[#00F5FF]/10 border border-[#00F5FF]/20">
             <Coins className="w-4 h-4 text-[#00F5FF]" />
-            <span className="font-technical text-sm font-bold text-[#00F5FF] tracking-widest uppercase">15 Bio-Coins per 1000 steps</span>
+            <span className="font-technical text-sm font-bold text-[#00F5FF] tracking-widest uppercase">15 Bio-Coins por cada 1000 pasos</span>
           </div>
         </div>
 
@@ -172,7 +173,7 @@ export const Arena: React.FC<ArenaProps> = ({ onBack, onSuccess }) => {
       {/* Right Panel: Environment Data */}
       <aside className="lg:col-span-3 space-y-6 order-3">
         <div className="bg-[#1c1f29]/70 backdrop-blur-xl p-4 border-r-2 border-[#fe00fe] shadow-[0_0_15px_rgba(254,0,254,0.1)]">
-          <h3 className="font-headline text-xs tracking-[0.2em] text-[#849495] mb-4 uppercase">ARENA CONDITIONS</h3>
+          <h3 className="font-headline text-xs tracking-[0.2em] text-[#849495] mb-4 uppercase">CONDICIONES</h3>
           <div className="space-y-4">
             <div className="p-3 bg-[#0a0e17] border border-[#3a494a]/20">
               <div className="flex justify-between items-center mb-2">
