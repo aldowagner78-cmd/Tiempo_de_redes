@@ -74,5 +74,48 @@ service cloud.firestore {
       allow create: if isAuthenticated() && isValidLog(request.resource.data);
       allow delete: if false; // Logs are immutable
     }
+
+    // ===============================================================
+    // nexus_devices — Dispositivos Android de control parental
+    // ===============================================================
+    // El dispositivo (auth anónimo) escribe su propio documento.
+    // Cualquier padre autenticado (Google) puede leer para monitorear.
+    // ===============================================================
+
+    match /nexus_devices/{deviceId} {
+      allow write: if isOwner(deviceId);
+      allow read:  if isAuthenticated();
+
+      match /children/{childId} {
+        allow write: if isOwner(deviceId);
+        allow read:  if isAuthenticated();
+      }
+
+      match /transactions/{txId} {
+        allow write: if isOwner(deviceId);
+        allow read:  if isAuthenticated();
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // Comandos del padre → dispositivo hijo
+      // ─────────────────────────────────────────────────────────
+      // El padre autenticado (Google) crea comandos.
+      // El dispositivo (auth anónimo = owner) los lee y marca executed.
+      match /commands/{commandId} {
+        allow create: if isAuthenticated() && !request.auth.token.firebase.sign_in_provider == 'anonymous';
+        allow read:   if isAuthenticated();
+        allow update: if isOwner(deviceId)
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'executedAt']);
+        allow delete: if false;
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // Estado en vivo reportado por el dispositivo hijo
+      // ─────────────────────────────────────────────────────────
+      match /live_status/{doc} {
+        allow write: if isOwner(deviceId);
+        allow read:  if isAuthenticated();
+      }
+    }
   }
 }

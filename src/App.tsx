@@ -7,6 +7,7 @@ import { Arena } from '@/src/pages/Arena';
 import { Chat } from '@/src/pages/Chat';
 import { Profile } from '@/src/pages/Profile';
 import { Login } from '@/src/pages/Login';
+import { NexusParentPanel } from '@/src/pages/NexusParentPanel';
 import { UserStats } from '@/src/types';
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from '@/src/lib/firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
@@ -20,6 +21,13 @@ export default function App() {
   const [stats, setStats] = useState<UserStats | null>(null);
 
   useEffect(() => {
+    // E2E testing bypass — skip Firebase auth entirely
+    if ((window as any).__NEXUS_E2E__) {
+      setUser((window as any).__NEXUS_MOCK_USER__ ?? null);
+      setStats((window as any).__NEXUS_MOCK_STATS__ ?? null);
+      setIsAuthReady(true);
+      return;
+    }
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsAuthReady(true);
@@ -28,6 +36,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if ((window as any).__NEXUS_E2E__) return;
     if (!user) {
       setStats(null);
       return;
@@ -128,6 +137,8 @@ export default function App() {
         return <Modules onSelectModule={setActiveModule} />;
       case 'vault':
         return <Chat />;
+      case 'nexus':
+        return <NexusParentPanel />;
       case 'profile':
         return <Profile user={user} stats={stats} onLogout={handleLogout} />;
       default:

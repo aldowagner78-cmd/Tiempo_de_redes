@@ -10,7 +10,8 @@ import {
   Terminal,
   Menu,
   X,
-  Plus
+  Plus,
+  MonitorSmartphone,
 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 
@@ -29,6 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
     { id: 'dashboard', label: 'Resumen', icon: LayoutDashboard },
     { id: 'missions', label: 'Misiones', icon: Rocket },
     { id: 'vault', label: 'Mercado', icon: Wallet },
+    { id: 'nexus', label: 'Nexus', icon: MonitorSmartphone },
     { id: 'profile', label: 'Perfil', icon: User },
   ];
 
@@ -56,6 +58,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, setActiveTa
             <button onClick={() => setActiveTab('dashboard')} className={cn("font-label tracking-[0.1em] uppercase text-sm transition-all", activeTab === 'dashboard' ? "text-[#00F5FF] drop-shadow-[0_0_5px_rgba(0,245,255,1)]" : "text-[#849495] hover:text-[#FE00FE]")}>Comando</button>
             <button onClick={() => setActiveTab('missions')} className={cn("font-label tracking-[0.1em] uppercase text-sm transition-all", activeTab === 'missions' ? "text-[#00F5FF] drop-shadow-[0_0_5px_rgba(0,245,255,1)]" : "text-[#849495] hover:text-[#FE00FE]")}>Flota</button>
             <button onClick={() => setActiveTab('vault')} className={cn("font-label tracking-[0.1em] uppercase text-sm transition-all", activeTab === 'vault' ? "text-[#00F5FF] drop-shadow-[0_0_5px_rgba(0,245,255,1)]" : "text-[#849495] hover:text-[#FE00FE]")}>Sistemas</button>
+            <button onClick={() => setActiveTab('nexus')} className={cn("font-label tracking-[0.1em] uppercase text-sm transition-all", activeTab === 'nexus' ? "text-[#00F5FF] drop-shadow-[0_0_5px_rgba(0,245,255,1)]" : "text-[#849495] hover:text-[#FE00FE]")}>Nexus</button>
           </div>
           <div className="bg-[#1c1f29]/50 px-3 py-1 rounded-sm border border-[#e9feff]/10">
             <span className="text-[#00F5FF] font-label tracking-[0.1em] uppercase text-sm font-bold">00:42:15</span>

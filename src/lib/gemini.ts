@@ -1,7 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.GEMINI_API_KEY!;
-const ai = new GoogleGenAI({ apiKey });
+const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+let _ai: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI {
+  if (!_ai) {
+    if (!apiKey) throw new Error('VITE_GEMINI_API_KEY no configurada');
+    _ai = new GoogleGenAI({ apiKey });
+  }
+  return _ai;
+}
 
 export const models = {
   flash: "gemini-3-flash-latest",
@@ -12,7 +19,7 @@ export const models = {
 };
 
 export async function analyzeImage(base64Image: string, prompt: string) {
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: models.pro,
     contents: [
       {
@@ -27,7 +34,7 @@ export async function analyzeImage(base64Image: string, prompt: string) {
 }
 
 export async function generateChatResponse(history: any[], message: string) {
-  const chat = ai.chats.create({
+  const chat = getAI().chats.create({
     model: models.flash,
     config: {
       systemInstruction: "Eres NEXUS, una inteligencia artificial avanzada de control de comando. Tu tono es profesional, técnico y ligeramente futurista. Ayudas al comandante a gestionar misiones, analizar datos y optimizar el rendimiento de los sujetos NEX.",
@@ -43,7 +50,7 @@ export async function generateChatResponse(history: any[], message: string) {
 }
 
 export async function generateImageFromPrompt(prompt: string) {
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: models.image,
     contents: { parts: [{ text: prompt }] },
     config: {
@@ -66,7 +73,7 @@ export async function generateImageFromPrompt(prompt: string) {
 }
 
 export async function searchGrounding(query: string) {
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: models.flash,
     contents: { parts: [{ text: query }] },
     config: {
@@ -80,7 +87,7 @@ export async function searchGrounding(query: string) {
 }
 
 export async function mapsGrounding(query: string, location?: { lat: number, lng: number }) {
-  const response = await ai.models.generateContent({
+  const response = await getAI().models.generateContent({
     model: models.flash,
     contents: { parts: [{ text: query }] },
     config: {
